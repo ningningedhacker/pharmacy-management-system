@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="summary-cards">
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-pills"></i></div>
+            <h3>إجمالي الأدوية</h3>
+            <p>{{ "{:,}".format(drugs|length) }}</p>
+            <a href="{{ url_for('report') }}" class="card-link">عرض التفاصيل <i class="fas fa-arrow-left"></i></a>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-boxes"></i></div>
+            <h3>إجمالي الكمية</h3>
+            <p>{{ "{:,}".format(drugs|sum(attribute='quantity')) }}</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <h3>إجمالي التكلفة</h3>
+            <p>{{ "{:,.2f}".format(total_cost) }} د.ع</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon"><i class="fas fa-cash-register"></i></div>
+            <h3>إجمالي الربح</h3>
+            <p class="profit">
+                {{ "{:,.2f}".format(total_profit) }} د.ع
+            </p>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a href="#add-drug-modal" class="btn primary-btn big-btn">
+            <i class="fas fa-plus-circle"></i> إضافة دواء جديد
+        </a>
+        <a href="{{ url_for('report') }}" class="btn secondary-btn big-btn">
+            <i class="fas fa-chart-bar"></i> عرض التقارير
+        </a>
+    </div>
+</section>
+
+<!-- Add Drug Modal -->
+<!-- Add Drug Modal -->
+<div id="add-drug-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-plus-circle"></i> إضافة دواء جديد</h2>
+            <a href="#" class="close-btn">&times;</a>
+        </div>
+        
+        <form method="post" action="{{ url_for('add') }}">
+            {% include "partials/drug_form.html" %}
+            
+            <div class="form-actions">
+                <button type="submit" class="btn submit-btn">
+                    <i class="fas fa-save"></i> حفظ الدواء
+                </button>
+                <a href="#" class="btn cancel-btn">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

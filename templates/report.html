@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="report-section">
+    <div class="report-header">
+        <h2><i class="fas fa-chart-pie"></i> تقرير المخزون</h2>
+        <div class="report-actions">
+            <a href="{{ url_for('export') }}" class="btn export-btn">
+                <i class="fas fa-file-export"></i> تصدير Excel
+            </a>
+            <button class="btn print-btn" onclick="window.print()">
+                <i class="fas fa-print"></i> طباعة
+            </button>
+        </div>
+    </div>
+    
+    <div class="filters-card">
+        <form method="get" action="{{ url_for('report') }}" class="filter-form">
+            <div class="filter-group">
+                <input type="text" name="search" placeholder="ابحث عن دواء..." 
+                       value="{{ search_query }}" class="filter-input">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="filter-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" name="low_stock" value="true" {% if low_stock %}checked{% endif %}>
+                    <span class="checkmark"></span>
+                    <span>أدوية منخفضة (<10)</span>
+                </label>
+            </div>
+            <button type="submit" class="btn filter-btn">
+                <i class="fas fa-filter"></i> تطبيق الفلتر
+            </button>
+        </form>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ "{:,}".format(total_medicines) }}</div>
+            <div class="stat-label">عدد الأدوية</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ "{:,}".format(total_quantity) }}</div>
+            <div class="stat-label">إجمالي الكمية</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ "{:,.2f}".format(total_cost) }} د.ع</div>
+            <div class="stat-label">إجمالي التكلفة</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value {{ 'profit' if total_retail_profit >= 0 else 'loss' }}">
+                {{ "{:,.2f}".format(total_retail_profit) }} د.ع
+            </div>
+            <div class="stat-label">ربح المفرد</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value {{ 'profit' if total_wholesale_profit >= 0 else 'loss' }}">
+                {{ "{:,.2f}".format(total_wholesale_profit) }} د.ع
+            </div>
+            <div class="stat-label">ربح الجملة</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value {{ 'profit' if total_profit >= 0 else 'loss' }}">
+                {{ "{:,.2f}".format(total_profit) }} د.ع
+            </div>
+            <div class="stat-label">إجمالي الربح</div>
+        </div>
+    </div>
+    
+    {% if drugs %}
+    <div class="table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>اسم الدواء</th>
+                    <th>الكمية</th>
+                    <th>سعر الشراء</th>
+                    <th>سعر المفرد</th>
+                    <th>ربح المفرد</th>
+                    <th>سعر الجملة</th>
+                    <th>ربح الجملة</th>
+                    <th>تاريخ انتهاء الصلاحية</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for drug in drugs %}
+                <tr class="{{ 'low-stock' if drug.quantity < 10 }} {{ 'expired' if drug.expiry_date_obj and drug.expiry_date_obj < current_date }}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ drug.name }}</td>
+                    <td class="{{ 'warning' if drug.quantity < 10 }}">
+                        {{ drug.quantity }}
+                        {% if drug.quantity < 10 %}
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% endif %}
+                    </td>
+                    <td>{{ "%.2f"|format(drug.purchase_price) }} د.ع</td>
+                    <td>{{ "%.2f"|format(drug.retail_price) }} د.ع</td>
+                    <td>{{ "%.2f"|format(drug.retail_profit) }} د.ع</td>
+                    <td>{{ "%.2f"|format(drug.wholesale_price) }} د.ع</td>
+                    <td>{{ "%.2f"|format(drug.wholesale_profit) }} د.ع</td>
+                    <td>
+                        {% if drug.expiry_date %}
+                        {{ drug.expiry_date }}
+                        {% if drug.expiry_date_obj and drug.expiry_date_obj < current_date %}
+                        <i class="fas fa-exclamation-triangle expired-icon" title="منتهي الصلاحية"></i>
+                        {% endif %}
+                    {% else %}
+                        غير محدد
+                    {% endif %}
+                    </td>
+                    <td class="actions">
+                        <div class="action-buttons">
+                            <a href="{{ url_for('edit', index=loop.index0, source='report') }}" class="action-btn edit" title="تعديل">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{{ url_for('delete', index=loop.index0, source='report') }}" class="action-btn delete" title="حذف"
+                               onclick="return confirm('هل أنت متأكد من حذف هذا الدواء؟')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-box-open fa-3x"></i>
+        <h3>لا توجد أدوية</h3>
+        <p>لم يتم العثور على أدوية تطابق معايير البحث</p>
+        <a href="{{ url_for('index') }}" class="btn primary-btn">
+            <i class="fas fa-plus"></i> إضافة دواء جديد
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

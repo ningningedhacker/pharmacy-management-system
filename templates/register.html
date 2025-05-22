@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="register-section">
+    <div class="register-card">
+        <h2><i class="fas fa-user-plus"></i> إنشاء حساب جديد</h2>
+        
+        <form method="post" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username">اسم المستخدم:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">كلمة المرور:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">تأكيد كلمة المرور:</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn primary-btn">
+                    <i class="fas fa-user-plus"></i> إنشاء حساب
+                </button>
+                <a href="{{ url_for('login') }}" class="btn secondary-btn">
+                    <i class="fas fa-sign-in-alt"></i> لديك حساب؟ سجل الدخول
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

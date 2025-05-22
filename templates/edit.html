@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="edit-drug">
+    <h2><i class="fas fa-edit"></i> تعديل بيانات الدواء</h2>
+    
+    <form method="post" action="{{ url_for('edit', index=index, source=source) }}">
+        {% include "partials/drug_form.html" %}
+        
+        <div class="form-actions">
+            <button type="submit" class="btn submit-btn"><i class="fas fa-save"></i> حفظ التعديلات</button>
+            <a href="{{ url_for('report' if source == 'report' else 'index') }}" class="btn cancel-btn">
+                <i class="fas fa-times"></i> إلغاء
+            </a>
+        </div>
+    </form>
+</section>
+{% endblock %}

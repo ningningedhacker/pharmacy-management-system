@@ -1,0 +1,35 @@
+<div class="form-group">
+    <label for="name">اسم الدواء:</label>
+    <input type="text" id="name" name="name" class="form-control" 
+           value="{{ drug.name if drug else '' }}" required>
+</div>
+
+<div class="form-group">
+    <label for="quantity">الكمية:</label>
+    <input type="number" id="quantity" name="quantity" class="form-control" 
+           min="0" value="{{ drug.quantity if drug else 0 }}" required>
+</div>
+
+<div class="form-group">
+    <label for="purchase_price">سعر الشراء (د.ع):</label>
+    <input type="number" id="purchase_price" name="purchase_price" class="form-control" 
+           min="0" step="0.01" value="{{ drug.purchase_price if drug else 0 }}" required>
+</div>
+
+<div class="form-group">
+    <label for="retail_price">سعر البيع للمفرد (د.ع):</label>
+    <input type="number" id="retail_price" name="retail_price" class="form-control" 
+           min="0" step="0.01" value="{{ drug.retail_price if drug else 0 }}" required>
+</div>
+
+<div class="form-group">
+    <label for="wholesale_price">سعر البيع بالجملة (د.ع):</label>
+    <input type="number" id="wholesale_price" name="wholesale_price" class="form-control" 
+           min="0" step="0.01" value="{{ drug.wholesale_price if drug else 0 }}" required>
+</div>
+
+<div class="form-group">
+    <label for="expiry_date">تاريخ انتهاء الصلاحية:</label>
+    <input type="date" id="expiry_date" name="expiry_date" class="form-control" 
+    value="{{ drug.expiry_date if drug and drug.expiry_date else '' }}" required>
+</div>
